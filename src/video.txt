@@ -1,0 +1,22 @@
+#include <opencv2/core.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/videoio.hpp>
+
+cv::VideoCapture capture("rtsp://192.168.2.10:554/1/h264major");
+
+if (capture.isOpened()) {
+
+	cv::namedWindow("Stream", CV_WINDOW_NORMAL);
+	cv::resizeWindow("Stream", 1280, 720);
+
+	cv::Mat frame;
+
+	while (true) {
+		if (capture.read(frame)) {
+			cv::imshow("Stream", frame);
+			cv::waitKey(30);
+		}
+	}
+}
+
+return 0;

@@ -61,6 +61,8 @@ namespace Capture3
 			ProfileCurvesPanel profileCurvesPanel;
 			ProfileResultPanel profileResultPanel;
 			PatchesPanel patchesPanel;
+			// ProgressBarComponent progressBar;
+			// ProgressDialogComponent progressDialog;
 	};
 }
 

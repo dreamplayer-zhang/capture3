@@ -1,4 +1,5 @@
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QStyleFactory>
 #include <QtGui/QSurfaceFormat>
 
 
@@ -6,8 +7,8 @@
 #include "application/Application.h"
 
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
+	
 	// OpenGL format
 	QSurfaceFormat format;
 	format.setVersion(4, 1);
@@ -22,7 +23,7 @@ int main(int argc, char *argv[])
 	QApplication::setApplicationVersion(Capture3::APPLICATION_VERSION);
 	QApplication::setOrganizationName(Capture3::APPLICATION_COMPANY);
 	QApplication::setQuitOnLastWindowClosed(true);
-	QApplication::setDesktopSettingsAware(true);
+	QApplication::setStyle(QStyleFactory::create("Fusion"));
 	QApplication app(argc, argv);
 
 	// Run application

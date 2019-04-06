@@ -9,7 +9,6 @@
 #include <QtCore/QRunnable>
 #include <QtWidgets/QApplication>
 
-
 #include "components/window/WindowComponent.h"
 #include "modules/welcome/WelcomeModule.h"
 #include "modules/exposure/ExposureModule.h"
@@ -23,6 +22,9 @@
 #include "../constants/ApplicationConstants.h"
 #include "../constants/ResourceConstants.h"
 #include "../utils/FileUtils.h"
+// #include "tasks/Hello.h"
+// #include "tasks/Hello2.h"
+// #include "tasks/Hello3.h"
 
 
 namespace Capture3
@@ -35,6 +37,10 @@ namespace Capture3
 			Application();
 
 			virtual ~Application();
+
+		private slots:
+			// void done1(const QString &test, Hello *hello);
+			// void done2(const QString &test);
 
 		private:
 			void updateTitle();
@@ -50,6 +56,11 @@ namespace Capture3
 			ColorProfileModule colorProfileModule;
 			CaptureModule captureModule;
 			ExportModule exportModule;
+
+			// Hello2 hello21;
+			// Hello2 hello22;
+			// Hello2 hello23;
+			// Hello3 test;
 
 	};
 }

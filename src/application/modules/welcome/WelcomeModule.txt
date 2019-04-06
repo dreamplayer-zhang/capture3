@@ -84,8 +84,26 @@ namespace Capture3
 
 	void WelcomeModule::capture()
 	{
-		// Capture / load background image
+		/*
 		Image *image = engine.getCamera().capture(
+			12, // cameraPanel.getCameraControl().getIndexAperture(),
+			15, // cameraPanel.getCameraControl().getIndexShutterSpeed(),
+			0, // cameraPanel.getCameraControl().getIndexIso(),
+			3, // cameraPanel.getCameraControl().getIndexShots(),
+			5, // cameraPanel.getCameraControl().getIndexRange(),
+			2, // cameraPanel.getCameraControl().getIndexStep(),
+			0, // cameraPanel.getCameraControl().getIndexMergeShots(),
+			2, // cameraPanel.getCameraControl().getIndexMergeRange(),
+			0, // cameraPanel.getCameraControl().getFocusNear(),
+			0 // cameraPanel.getCameraControl().getFocusFar(),
+		);
+		image->convertRGB();
+		image->gammaCorrection();
+		thumbnailsPanel.getThumbnails().add(image);
+		*/
+
+		// Capture / load background image
+		Image *imageWhite = engine.getCamera().capture(
 			cameraPanel.getCameraControl().getIndexAperture(),
 			cameraPanel.getCameraControl().getIndexShutterSpeed(),
 			cameraPanel.getCameraControl().getIndexIso(),
@@ -97,19 +115,61 @@ namespace Capture3
 			cameraPanel.getCameraControl().getFocusNear(),
 			cameraPanel.getCameraControl().getFocusFar()
 		);
-		image->convertRGB();
+
+		// Capture / load background image
+		Image *imageColorChart = engine.getCamera().capture(
+			cameraPanel.getCameraControl().getIndexAperture(),
+			cameraPanel.getCameraControl().getIndexShutterSpeed(),
+			cameraPanel.getCameraControl().getIndexIso(),
+			cameraPanel.getCameraControl().getIndexShots(),
+			cameraPanel.getCameraControl().getIndexRange(),
+			cameraPanel.getCameraControl().getIndexStep(),
+			cameraPanel.getCameraControl().getIndexMergeShots(),
+			cameraPanel.getCameraControl().getIndexMergeRange(),
+			cameraPanel.getCameraControl().getFocusNear(),
+			cameraPanel.getCameraControl().getFocusFar()
+		);
+
+		// Convert background image to white level map
+		auto *whiteLevel = new WhiteLevel(imageWhite);
+		whiteLevel->apply(imageColorChart);
+
+
+		/*
+		double *data = imageColorChart->getRGB().getData();
+		for (unsigned int i = 0; i < imageColorChart->getSize().getArea(); i++) {
+			const unsigned int index = i * 3;
+			const double r = data[index + 0];
+			const double g = data[index + 1];
+			const double b = data[index + 2];
+			const double rOut = (r * 1.0) + (g * 0.0) + (b * 0.0);
+			const double gOut = (r * 0.0) + (g * 1.0) + (b * 0.0);
+			const double bOut = (r * 0.0) + (g * 0.0) + (b * 1.0);
+			data[index + 0] = rOut;
+			data[index + 1] = gOut;
+			data[index + 2] = bOut;
+		}
+		*/
+
+
+		// TODO: Color correction matrix
+		imageColorChart->convertRGB();
 
 		// Detect color chart and create color profile
 		auto *colorChartReference = new ColorChart();
-		ColorChart *colorChartDetected = detectColorChart(image);
+		ColorChart *colorChartDetected = detectColorChart(imageColorChart);
 		auto *colorProfile = new ColorProfile(colorChartReference, colorChartDetected);
 		auto *whiteBalance = new WhiteBalance(colorChartReference, colorChartDetected);
 
 		// Display the color chart image with gamma correction
-		image->gammaCorrection();
+		imageColorChart->gammaCorrection();
+
+		// Image * image = importImageDialog();
 
 		// Show!
-		thumbnailsPanel.getThumbnails().add(image);
+		// thumbnailsPanel.getThumbnails().add(image);
+		thumbnailsPanel.getThumbnails().add(imageWhite);
+		thumbnailsPanel.getThumbnails().add(imageColorChart);
 		thumbnailsPanel.getThumbnails().add(generatePreview(colorChartReference));
 		thumbnailsPanel.getThumbnails().add(generatePreview(colorChartDetected));
 		patchesPanel.getColorChart().show(colorProfile);
@@ -117,7 +177,7 @@ namespace Capture3
 		profileCurvesPanel.getWhiteBalanceCurves().show(whiteBalance);
 		profileResultPanel.getColorProfileGraph().show(colorChartReference, colorChartDetected);
 		profileResultPanel.getColorProfileMatrix().show(colorChartReference, colorChartDetected);
-		showImage(image);
+		showImage(imageColorChart);
 	}
 
 }
